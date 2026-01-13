@@ -838,13 +838,38 @@
             return false;
         }
 
-        // Save progress
-        function saveProgress() {
-            localStorage.setItem(AUTO_SAVE_KEY, JSON.stringify({
+        // Save progress (local + cloud)
+        async function saveProgress() {
+            // Save to localStorage first (immediate)
+            const progressData = {
                 answers: answers,
                 currentIndex: currentQuestionIndex,
                 timestamp: new Date().toISOString()
-            }));
+            };
+            localStorage.setItem(AUTO_SAVE_KEY, JSON.stringify(progressData));
+            
+            // Save to cloud storage (background, don't block UI)
+            try {
+                const response = await fetch('/.netlify/functions/save-personality-progress', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        answers: answers,
+                        currentIndex: currentQuestionIndex,
+                        userId: 'thandiwe'
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('✅ Saved to cloud:', result.filename);
+                }
+            } catch (error) {
+                console.log('⚠️ Cloud save failed (local save still works):', error);
+                // Don't show error to user - local save is sufficient
+            }
         }
 
         // Start training

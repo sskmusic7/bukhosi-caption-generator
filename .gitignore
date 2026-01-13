@@ -48,5 +48,11 @@ instance/
 *.tmp
 *.temp
 
+# GCP Credentials (NEVER commit!)
+*-credentials.json
+*service-account*.json
+gcp-credentials.json
+*.gcp.json
+
 # Local Netlify folder
 .netlify
