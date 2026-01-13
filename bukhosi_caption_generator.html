@@ -283,6 +283,22 @@
 
                 <div id="imageAnalysis"></div>
 
+                <!-- Caption Length Selector -->
+                <div style="margin: 20px 0; padding: 15px; background: rgba(0, 0, 0, 0.2); border-radius: 8px;">
+                    <label style="display: block; color: #FFD700; font-weight: 600; margin-bottom: 10px;">Caption Length:</label>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="length-btn active" data-length="short" style="flex: 1; padding: 10px; background: rgba(255, 215, 0, 0.2); border: 2px solid #FFD700; border-radius: 6px; color: white; cursor: pointer; font-weight: 600;">
+                            Short
+                        </button>
+                        <button class="length-btn" data-length="medium" style="flex: 1; padding: 10px; background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 215, 0, 0.3); border-radius: 6px; color: #ccc; cursor: pointer;">
+                            Medium
+                        </button>
+                        <button class="length-btn" data-length="long" style="flex: 1; padding: 10px; background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 215, 0, 0.3); border-radius: 6px; color: #ccc; cursor: pointer;">
+                            Long
+                        </button>
+                    </div>
+                </div>
+
                 <button id="generateBtn" disabled>
                     <span class="icon">✨</span> Generate Caption
                 </button>
@@ -358,6 +374,7 @@
         let currentCaption = '';
         let apiKey = localStorage.getItem('geminiApiKey') || '';
         let captionHistory = JSON.parse(localStorage.getItem('captionHistory') || '[]');
+        let captionLength = localStorage.getItem('captionLength') || 'short'; // short, medium, long
 
         // Load saved API key
         if (apiKey) {
@@ -382,6 +399,30 @@
         }
 
         displayHistory();
+
+        // Caption length selector
+        const lengthButtons = document.querySelectorAll('.length-btn');
+        lengthButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                lengthButtons.forEach(b => {
+                    b.classList.remove('active');
+                    b.style.background = 'rgba(255, 255, 255, 0.1)';
+                    b.style.borderColor = 'rgba(255, 215, 0, 0.3)';
+                    b.style.color = '#ccc';
+                    b.style.fontWeight = 'normal';
+                });
+                btn.classList.add('active');
+                btn.style.background = 'rgba(255, 215, 0, 0.2)';
+                btn.style.borderColor = '#FFD700';
+                btn.style.color = 'white';
+                btn.style.fontWeight = '600';
+                captionLength = btn.dataset.length;
+                localStorage.setItem('captionLength', captionLength);
+            });
+        });
+        
+        // Set initial active state
+        document.querySelector(`.length-btn[data-length="${captionLength}"]`)?.click();
 
         // Upload zone interaction
         const uploadZone = document.getElementById('uploadZone');
@@ -500,6 +541,16 @@
             // Remove data URL prefix to get base64
             const base64Image = imageData.split(',')[1];
             
+            // Determine length requirements based on selection
+            let lengthInstruction = '';
+            if (captionLength === 'short') {
+                lengthInstruction = 'SHORT (80-150 characters): Concise and punchy. Get to the point quickly.';
+            } else if (captionLength === 'medium') {
+                lengthInstruction = 'MEDIUM (150-300 characters): Balanced storytelling with context.';
+            } else {
+                lengthInstruction = 'LONG (300-600 characters): Full storytelling mode. Include details, context, and connection to heritage.';
+            }
+            
             const prompt = `You are Thandiwe Ngubane-Zulu, co-owner of Bukhosi Royal Wines.
 
 BRAND IDENTITY:
@@ -523,7 +574,17 @@ CAPTION STRUCTURE:
 3. CONNECTION (link to heritage/values/mission)
 4. CTA (optional, natural invitation)
 
-LENGTH: 150-250 chars for primary message, can extend to 300+ for storytelling
+CRITICAL - NEVER USE THESE AI-SOUNDING PHRASES:
+- "It's not just..." / "This isn't just..."
+- "It's more than..." / "This is more than..."
+- "Beyond just..." / "More than just..."
+- "Not only... but also..."
+- Any variation of these clichéd patterns
+Write naturally and directly. Be specific. Avoid meta-commentary about what things "are" or "aren't".
+
+LENGTH REQUIREMENTS:
+${lengthInstruction}
+Write naturally - no artificial limits, but aim for the range above.
 
 EMOJIS: Sparingly (max 2-3): 🍷 👑 🏆 🌍 ✨ 🍇
 
@@ -573,7 +634,7 @@ ANALYZE THE IMAGE AND WRITE AN AUTHENTIC INSTAGRAM CAPTION IN YOUR VOICE.`;
                         temperature: 0.9,
                         topK: 40,
                         topP: 0.95,
-                        maxOutputTokens: 1024,
+                        maxOutputTokens: 4096,
                     }
                 })
             });
