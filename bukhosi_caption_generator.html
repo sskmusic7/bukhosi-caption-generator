@@ -263,6 +263,11 @@
         <header>
             <div class="logo">BUKHOSI</div>
             <div class="tagline">Instagram Caption Generator • Thandiwe's Voice</div>
+            <div style="margin-top: 15px;">
+                <a href="personality_trainer.html" style="color: #FFD700; text-decoration: none; font-size: 0.9em; border: 1px solid #FFD700; padding: 8px 15px; border-radius: 5px; display: inline-block;">
+                    🧠 Train Your Voice
+                </a>
+            </div>
         </header>
 
         <div class="main-grid">
@@ -535,10 +540,50 @@
             }
         });
 
+        // Load personality profile from localStorage
+        function loadPersonalityProfile() {
+            try {
+                const profile = localStorage.getItem('thandiwe_personality_profile');
+                return profile ? JSON.parse(profile) : null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        // Generate personality-enhanced prompt
+        function enhancePromptWithProfile(basePrompt, profile) {
+            if (!profile) return basePrompt;
+            
+            // Extract wine description answers
+            const wineAnswers = profile.questions
+                .filter(q => q.category === 'Wine Descriptions & Tasting' && q.answer)
+                .map(q => q.answer)
+                .join(' ');
+            
+            // Extract key phrases from analysis
+            const keyPhrases = profile.analysis?.keyPhrases || [];
+            
+            // Build enhancement
+            let enhancement = '';
+            
+            if (wineAnswers) {
+                enhancement += `\n\nWINE DESCRIPTION STYLE (based on Thandiwe's expert palate):\n${wineAnswers.substring(0, 500)}\n\nWhen describing wine, use Thandiwe's authentic vocabulary and descriptions from above.`;
+            }
+            
+            if (keyPhrases.length > 0) {
+                enhancement += `\n\nKEY PHRASES TO USE: ${keyPhrases.slice(0, 5).join(', ')}`;
+            }
+            
+            return basePrompt + enhancement;
+        }
+
         // Generate caption using Gemini API
         async function generateCaption(imageData) {
             // Remove data URL prefix to get base64
             const base64Image = imageData.split(',')[1];
+            
+            // Load personality profile
+            const profile = loadPersonalityProfile();
             
             // Determine length requirements based on selection
             let lengthInstruction = '';
@@ -550,7 +595,7 @@
                 lengthInstruction = 'LONG (300-600 characters): Full storytelling mode. Include details, context, and connection to heritage.';
             }
             
-            const prompt = `You are Thandiwe Ngubane-Zulu, co-owner of Bukhosi Royal Wines.
+            let prompt = `You are Thandiwe Ngubane-Zulu, co-owner of Bukhosi Royal Wines.
 
 BRAND IDENTITY:
 - South Africa's ONLY black-owned vineyard in Cape Winelands
@@ -611,6 +656,9 @@ CONTENT THEMES:
 - Behind the Scenes (team, vineyard life, family)
 
 ANALYZE THE IMAGE AND WRITE AN AUTHENTIC INSTAGRAM CAPTION IN YOUR VOICE.`;
+            
+            // Enhance prompt with personality profile if available
+            prompt = enhancePromptWithProfile(prompt, profile);
 
             // If user has provided their own API key, use it directly
             if (apiKey) {

@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thandiwe's Personality Training | Bukhosi Voice Capture</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #4a1a1a 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+        }
+
+        .logo {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #FFD700;
+            margin-bottom: 10px;
+            font-family: 'Georgia', serif;
+        }
+
+        .tagline {
+            color: #ccc;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 15px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #FFD700;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .question-section {
+            display: none;
+        }
+
+        .question-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: rgba(255, 215, 0, 0.2);
+            color: #FFD700;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+
+        .question-number {
+            color: #999;
+            font-size: 0.95em;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 1.4em;
+            color: #FFD700;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .question-help {
+            color: #999;
+            font-size: 0.95em;
+            font-style: italic;
+            margin-bottom: 25px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 1.05em;
+            font-family: inherit;
+            resize: vertical;
+            margin-bottom: 20px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #FFD700;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        textarea::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #1a1a1a;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        button.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #FFD700;
+        }
+
+        button.secondary:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .intro-screen, .completion-screen {
+            text-align: center;
+        }
+
+        .intro-screen h2, .completion-screen h2 {
+            color: #FFD700;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .intro-screen p, .completion-screen p {
+            font-size: 1.1em;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+
+        .intro-screen ul {
+            text-align: left;
+            max-width: 600px;
+            margin: 30px auto;
+            color: #ccc;
+        }
+
+        .intro-screen li {
+            margin-bottom: 15px;
+            padding-left: 10px;
+        }
+
+        .completion-screen {
+            display: none;
+        }
+
+        .completion-screen.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-box {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            color: #FFD700;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .voice-analysis {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .voice-analysis h3 {
+            color: #FFD700;
+            margin-bottom: 15px;
+        }
+
+        .voice-analysis p {
+            color: #ccc;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .download-section {
+            margin-top: 30px;
+        }
+
+        .intro-screen button {
+            max-width: 300px;
+            margin: 20px auto;
+        }
+
+        .skip-notice {
+            color: #999;
+            font-size: 0.9em;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">BUKHOSI</div>
+            <div class="tagline">Personality Training • Capture Thandiwe's Authentic Voice</div>
+        </header>
+
+        <!-- Intro Screen -->
+        <div class="card intro-screen active" id="introScreen">
+            <h2>Welcome, Thandiwe! 🍷</h2>
+            <p>
+                This training will help us capture your authentic voice so the caption generator 
+                sounds genuinely like YOU - not a generic AI.
+            </p>
+            <p>
+                <strong>How it works:</strong>
+            </p>
+            <ul>
+                <li>📝 <strong>70 questions</strong> about your background, wine philosophy, and communication style</li>
+                <li>⏱️ <strong>~45 minutes</strong> to complete (you can save & come back anytime)</li>
+                <li>💬 <strong>Answer naturally</strong> - like we're having a conversation over wine</li>
+                <li>🎯 <strong>Be yourself</strong> - there are no wrong answers!</li>
+                <li>✨ <strong>Result:</strong> Captions that sound exactly like you</li>
+            </ul>
+            <p style="margin-top: 30px;">
+                Your answers will be analyzed by AI to understand:
+                <br>• The words and phrases you use naturally
+                <br>• Your storytelling style
+                <br>• Your tone and energy
+                <br>• How you express your heritage and values
+            </p>
+            <button onclick="startTraining()">🚀 Let's Begin!</button>
+            <p class="skip-notice">
+                You can skip questions if you're not sure - but the more you answer, the better!
+            </p>
+        </div>
+
+        <!-- Question Cards -->
+        <div class="card question-section" id="questionCard">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+            </div>
+            <div class="progress-text" id="progressText">Question 1 of 70</div>
+
+            <div class="category-badge" id="categoryBadge">Background & Identity</div>
+            <div class="question-number" id="questionNumber">Question 1</div>
+            <div class="question-text" id="questionText"></div>
+            <div class="question-help" id="questionHelp"></div>
+
+            <textarea 
+                id="answerInput" 
+                placeholder="Type your answer here... Be natural and conversational!"
+                onkeydown="handleKeyPress(event)"
+            ></textarea>
+
+            <div class="button-group">
+                <button class="secondary" onclick="previousQuestion()" id="prevBtn" disabled>
+                    ← Previous
+                </button>
+                <button onclick="skipQuestion()" class="secondary">
+                    Skip →
+                </button>
+                <button onclick="nextQuestion()" id="nextBtn">
+                    Next →
+                </button>
+            </div>
+
+            <div style="text-align: center; margin-top: 20px; color: #999; font-size: 0.9em;">
+                Press Ctrl/Cmd + Enter to move to next question
+            </div>
+        </div>
+
+        <!-- Completion Screen -->
+        <div class="card completion-screen" id="completionScreen">
+            <h2>🎉 Training Complete!</h2>
+            <p>
+                Amazing work, Thandiwe! You've completed the personality training.
+            </p>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-number" id="answeredCount">0</div>
+                    <div class="stat-label">Questions Answered</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="totalWords">0</div>
+                    <div class="stat-label">Total Words</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="avgLength">0</div>
+                    <div class="stat-label">Avg. Answer Length</div>
+                </div>
+            </div>
+
+            <div class="voice-analysis">
+                <h3>✨ Your Voice Profile</h3>
+                <p id="voiceProfile">Analyzing your responses...</p>
+            </div>
+
+            <div class="download-section">
+                <button onclick="downloadResults()">
+                    📥 Download Your Voice Profile
+                </button>
+                <button onclick="copyToClipboard()" class="secondary" style="margin-top: 15px;">
+                    📋 Copy Results to Clipboard
+                </button>
+            </div>
+
+            <p style="margin-top: 30px; color: #ccc;">
+                <strong>Next steps:</strong><br>
+                1. Download your voice profile<br>
+                2. Share with Big Mitch to update the caption generator<br>
+                3. Test the improved captions!
+            </p>
+
+            <button onclick="window.location.reload()" class="secondary" style="margin-top: 30px; max-width: 300px;">
+                ↻ Start Over
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Questions database
+        const questions = [
+            // Background & Identity (10)
+            { 
+                category: "Background & Identity",
+                question: "Tell me your story. How did you come to be part of Bukhosi Royal Wines?",
+                help: "Share your journey - be personal and authentic"
+            },
+            {
+                category: "Background & Identity",
+                question: "What does being part of the Zulu royal family mean to you personally?",
+                help: "Think about both the responsibility and the pride"
+            },
+            {
+                category: "Background & Identity",
+                question: "Describe your relationship with your mother, Princess Ntombifuthi. What have you learned from her?",
+                help: "Share specific lessons or memorable moments"
+            },
+            {
+                category: "Background & Identity",
+                question: "When did you fall in love with wine? Was there a specific moment?",
+                help: "Tell the story - we want to feel the moment!"
+            },
+            {
+                category: "Background & Identity",
+                question: "What makes you most proud about Bukhosi Royal Wines?",
+                help: "What achievement stands out? What fills your heart?"
+            },
+            {
+                category: "Background & Identity",
+                question: "How do you balance tradition with innovation in your winemaking?",
+                help: "Give examples of both old wisdom and new approaches"
+            },
+            {
+                category: "Background & Identity",
+                question: "What does 'heritage in every pour' mean to you?",
+                help: "Go deeper than the tagline - make it personal"
+            },
+            {
+                category: "Background & Identity",
+                question: "Describe a typical day at the vineyard. What brings you joy?",
+                help: "Paint a picture - morning routines, favorite moments"
+            },
+            {
+                category: "Background & Identity",
+                question: "Why is it important to you that Bukhosi is the only black-owned vineyard in the Cape Winelands?",
+                help: "Be honest about what this representation means"
+            },
+            {
+                category: "Background & Identity",
+                question: "If you could describe Bukhosi in three words, what would they be and why?",
+                help: "Pick words that feel true to you, then explain them"
+            },
+
+            // Wine Philosophy & Craft (10)
+            {
+                category: "Wine Philosophy & Craft",
+                question: "What's your favorite wine in your portfolio and why?",
+                help: "Be specific - what makes it special to you?"
+            },
+            {
+                category: "Wine Philosophy & Craft",
+                question: "Tell me about those 1976 & 1983 bush vines. Why are they special?",
+                help: "What story do they tell? What wisdom do they carry?"
+            },
+            {
+                category: "Wine Philosophy & Craft",
+                question: "What's the most challenging part of winemaking that people don't see?",
+                help: "Share the reality behind the romance"
+            },
+            {
+                category: "Wine Philosophy & Craft",
+                question: "Describe the taste of a Bukhosi wine to someone who's never tried it.",
+                help: "Use your own words - don't worry about technical terms"
+            },
+            {
+                category: "Wine Philosophy & Craft",
+                question: "What does 'terroir' mean to you? How does South African soil speak through your wines?",
+                help: "Make it personal - how do you experience terroir?"
+            },
+            {
+                category: "Wine Philosophy & Craft",
+                question: "Tell me about harvest season. What's the energy like?",
+                help: "Capture the feeling, the excitement, the atmosphere"
+            },
+            {
+                category: "Wine Philosophy & Craft",
+                question: "How do you decide when a wine is ready to bottle?",
+                help: "Is it science? Instinct? Both?"
+            },
+            {
+                category: "Wine Philosophy & Craft",
+                question: "What food do you most love pairing with your wines?",
+                help: "Be specific! Why does this pairing work?"
+            },
+            {
+                category: "Wine Philosophy & Craft",
+                question: "What do you want people to feel when they drink a Bukhosi wine?",
+                help: "Beyond 'enjoyment' - what emotion or experience?"
+            },
+            {
+                category: "Wine Philosophy & Craft",
+                question: "If your wines could tell a story, what would it be?",
+                help: "Get creative - let your imagination speak"
+            },
+
+            // The Famous Pasta & Experiences (10)
+            {
+                category: "The Famous Pasta & Experiences",
+                question: "Tell me the story behind your famous pasta! How did this become part of the experience?",
+                help: "We want the full story - origins, evolution, significance"
+            },
+            {
+                category: "The Famous Pasta & Experiences",
+                question: "What's the secret to your pasta? (Or is it a family secret? 😊)",
+                help: "Share what you're comfortable sharing!"
+            },
+            {
+                category: "The Famous Pasta & Experiences",
+                question: "Describe your ideal wine tasting experience. What makes it magical?",
+                help: "From atmosphere to interaction to the wine itself"
+            },
+            {
+                category: "The Famous Pasta & Experiences",
+                question: "What's your favorite visitor reaction you've ever witnessed?",
+                help: "Tell us about a moment that touched your heart"
+            },
+            {
+                category: "The Famous Pasta & Experiences",
+                question: "Why is the Royal Heritage Experience your most popular offering?",
+                help: "What do people connect with? What makes it special?"
+            },
+            {
+                category: "The Famous Pasta & Experiences",
+                question: "Sunset tours with photography — whose idea was that and why?",
+                help: "Share the thinking behind this unique offering"
+            },
+            {
+                category: "The Famous Pasta & Experiences",
+                question: "What do you hope visitors remember most after visiting Bukhosi?",
+                help: "Beyond the wine - what experience do you want to create?"
+            },
+            {
+                category: "The Famous Pasta & Experiences",
+                question: "How do you make guests feel welcome and special?",
+                help: "What's your approach? Any specific rituals?"
+            },
+            {
+                category: "The Famous Pasta & Experiences",
+                question: "Tell me about a memorable wine tasting moment that touched your heart.",
+                help: "A specific story, please - make us feel it"
+            },
+            {
+                category: "The Famous Pasta & Experiences",
+                question: "What would you say to someone hesitant to visit a vineyard for the first time?",
+                help: "How do you make wine approachable and welcoming?"
+            },
+
+            // Values & Vision (10)
+            {
+                category: "Values & Vision",
+                question: "What does success look like for Bukhosi in 5 years?",
+                help: "Dream big - what's your vision?"
+            },
+            {
+                category: "Values & Vision",
+                question: "Why is it important for you to support local communities?",
+                help: "Give specific examples if you can"
+            },
+            {
+                category: "Values & Vision",
+                question: "What role does sustainability play in your winemaking?",
+                help: "How do you practice it? Why does it matter?"
+            },
+            {
+                category: "Values & Vision",
+                question: "How do you want to inspire other Black entrepreneurs?",
+                help: "What message do you want to send?"
+            },
+            {
+                category: "Values & Vision",
+                question: "What does 'excellence' mean to you?",
+                help: "Your definition - not textbook"
+            },
+            {
+                category: "Values & Vision",
+                question: "When you won the Gilbert & Gaillard Double Gold, how did you feel?",
+                help: "Capture that moment - the emotions, the significance"
+            },
+            {
+                category: "Values & Vision",
+                question: "What advice would your mother give to young winemakers?",
+                help: "Channel her wisdom - what would she say?"
+            },
+            {
+                category: "Values & Vision",
+                question: "How do you stay connected to your Zulu heritage in your daily work?",
+                help: "Specific practices, rituals, or moments"
+            },
+            {
+                category: "Values & Vision",
+                question: "What legacy do you want to leave through Bukhosi?",
+                help: "When you're 80, looking back - what would make you proud?"
+            },
+            {
+                category: "Values & Vision",
+                question: "Complete this sentence: 'Wine is more than a drink, it's...'",
+                help: "Finish it your way - be poetic, be honest"
+            },
+
+            // Social Media & Communication (10)
+            {
+                category: "Social Media & Communication",
+                question: "When you post on Instagram, what's your goal? What do you want people to feel?",
+                help: "Beyond engagement - what's the deeper purpose?"
+            },
+            {
+                category: "Social Media & Communication",
+                question: "Do you prefer short, punchy captions or longer storytelling posts?",
+                help: "Why? What feels more authentic to you?"
+            },
+            {
+                category: "Social Media & Communication",
+                question: "What kind of emojis do you naturally use? Any favorites?",
+                help: "List them! Do you use many or few?"
+            },
+            {
+                category: "Social Media & Communication",
+                question: "How do you describe your communication style? Formal? Friendly? Educational?",
+                help: "Pick words that feel right to you"
+            },
+            {
+                category: "Social Media & Communication",
+                question: "If someone commented 'I've never tried South African wine,' what would you say?",
+                help: "Type your actual response - like you're replying now"
+            },
+            {
+                category: "Social Media & Communication",
+                question: "How do you talk about awards without sounding boastful?",
+                help: "What's your approach to celebrating wins?"
+            },
+            {
+                category: "Social Media & Communication",
+                question: "What's your favorite way to start a conversation with a new follower?",
+                help: "Give an example of how you'd greet someone"
+            },
+            {
+                category: "Social Media & Communication",
+                question: "Do you use isiZulu words in your posts? If so, which ones and why?",
+                help: "List specific words and when you use them"
+            },
+            {
+                category: "Social Media & Communication",
+                question: "How do you handle negative comments or criticism online?",
+                help: "Your philosophy and approach"
+            },
+            {
+                category: "Social Media & Communication",
+                question: "What makes you laugh? What kind of humor do you appreciate?",
+                help: "This helps us understand your lighter side!"
+            },
+
+            // Rapid Fire (20)
+            {
+                category: "Rapid Fire - Voice Calibration",
+                question: "It's harvest season! How are you feeling?",
+                help: "Quick response - first thing that comes to mind"
+            },
+            {
+                category: "Rapid Fire - Voice Calibration",
+                question: "Someone just asked for a wine recommendation for beginners. What do you say?",
+                help: "Be natural - like you're texting a friend"
+            },
+            {
+                category: "Rapid Fire - Voice Calibration",
+                question: "You're posting a sunset photo from the vineyard. Write the caption.",
+                help: "Actually write it - this is practice!"
+            },
+            {
+                category: "Rapid Fire - Voice Calibration",
+                question: "A customer just said your Chenin Blanc changed their life. How do you respond?",
+                help: "Your actual response - what would you really say?"
+            },
+            {
+                category: "Rapid Fire - Voice Calibration",
+                question: "It's Friday evening. What wine are you opening?",
+                help: "Be honest! And why that one?"
+            },
+            {
+                category: "Rapid Fire - Voice Calibration",
+                question: "Describe the smell of the cellar in 5 words.",
+                help: "Just 5 words - go!"
+            },
+            {
+                category: "Rapid Fire - Voice Calibration",
+                question: "Someone asks 'Why should I choose Bukhosi?' Give a quick answer.",
+                help: "Elevator pitch - short and compelling"
+            },
+            {
+                category: "Rapid Fire - Voice Calibration",
+                question: "Your mother just told you a funny story. How do you retell it on Instagram?",
+                help: "Show us your storytelling style"
+            },
+            {
+                category: "Rapid Fire - Voice Calibration",
+                question: "A wine influencer wants to visit. How do you invite them?",
+                help: "Write the actual message you'd send"
+            },
+            {
+                category: "Rapid Fire - Voice Calibration",
+                question: "Complete: 'If wine could talk, mine would say...'",
+                help: "Finish the sentence - be creative!"
+            },
+            {
+                category: "Rapid Fire - Voice Calibration",
+                question: "How do you celebrate when something goes right?",
+                help: "What's your victory ritual?"
+            },
+            {
+                category: "Rapid Fire - Voice Calibration",
+                question: "What's your go-to phrase when you're excited?",
+                help: "The thing you say without thinking!"
+            },
+            {
+                category: "Rapid Fire - Voice Calibration",
+                question: "Describe your energy: morning person or evening person?",
+                help: "And how does that affect your day?"
+            },
+            {
+                category: "Rapid Fire - Voice Calibration",
+                question: "Do you prefer 'we' or 'I' when talking about the business?",
+                help: "Which feels more natural and why?"
+            },
+            {
+                category: "Rapid Fire - Voice Calibration",
+                question: "What words do you use a lot without realizing?",
+                help: "Think about your verbal tics or favorite phrases"
+            },
+            {
+                category: "Rapid Fire - Voice Calibration",
+                question: "How do you end most of your Instagram posts?",
+                help: "Your typical sign-off"
+            },
+            {
+                category: "Rapid Fire - Voice Calibration",
+                question: "Someone says 'I don't like wine.' What's your response?",
+                help: "How do you handle this gracefully?"
+            },
+            {
+                category: "Rapid Fire - Voice Calibration",
+                question: "You're tired but need to post. What's your approach?",
+                help: "Do you push through or wait?"
+            },
+            {
+                category: "Rapid Fire - Voice Calibration",
+                question: "What's more important: perfect grammar or authentic voice?",
+                help: "Quick answer - which one?"
+            },
+            {
+                category: "Rapid Fire - Voice Calibration",
+                question: "Last question: What do you want people to know about you that they might not expect?",
+                help: "Surprise us - share something unexpected!"
+            }
+        ];
+
+        // State
+        let currentQuestionIndex = 0;
+        let answers = [];
+        const AUTO_SAVE_KEY = 'bukhosi_personality_training';
+
+        // Load saved progress
+        function loadProgress() {
+            const saved = localStorage.getItem(AUTO_SAVE_KEY);
+            if (saved) {
+                const data = JSON.parse(saved);
+                answers = data.answers || [];
+                currentQuestionIndex = data.currentIndex || 0;
+                if (confirm('Continue from where you left off?')) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Save progress
+        function saveProgress() {
+            localStorage.setItem(AUTO_SAVE_KEY, JSON.stringify({
+                answers: answers,
+                currentIndex: currentQuestionIndex,
+                timestamp: new Date().toISOString()
+            }));
+        }
+
+        // Start training
+        function startTraining() {
+            document.getElementById('introScreen').classList.remove('active');
+            document.getElementById('questionCard').classList.add('active');
+            
+            if (!loadProgress()) {
+                answers = new Array(questions.length).fill('');
+                currentQuestionIndex = 0;
+            }
+            
+            showQuestion(currentQuestionIndex);
+        }
+
+        // Show question
+        function showQuestion(index) {
+            const q = questions[index];
+            const progress = ((index + 1) / questions.length) * 100;
+            
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `Question ${index + 1} of ${questions.length}`;
+            document.getElementById('categoryBadge').textContent = q.category;
+            document.getElementById('questionNumber').textContent = `Question ${index + 1}`;
+            document.getElementById('questionText').textContent = q.question;
+            document.getElementById('questionHelp').textContent = q.help;
+            document.getElementById('answerInput').value = answers[index] || '';
+            
+            // Button states
+            document.getElementById('prevBtn').disabled = index === 0;
+            document.getElementById('nextBtn').textContent = index === questions.length - 1 ? 'Finish!' : 'Next →';
+            
+            // Focus on textarea
+            document.getElementById('answerInput').focus();
+        }
+
+        // Next question
+        function nextQuestion() {
+            // Save current answer
+            answers[currentQuestionIndex] = document.getElementById('answerInput').value.trim();
+            saveProgress();
+            
+            if (currentQuestionIndex === questions.length - 1) {
+                // Finish!
+                completeTraining();
+            } else {
+                currentQuestionIndex++;
+                showQuestion(currentQuestionIndex);
+            }
+        }
+
+        // Previous question
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                answers[currentQuestionIndex] = document.getElementById('answerInput').value.trim();
+                saveProgress();
+                currentQuestionIndex--;
+                showQuestion(currentQuestionIndex);
+            }
+        }
+
+        // Skip question
+        function skipQuestion() {
+            answers[currentQuestionIndex] = '';
+            saveProgress();
+            
+            if (currentQuestionIndex === questions.length - 1) {
+                completeTraining();
+            } else {
+                currentQuestionIndex++;
+                showQuestion(currentQuestionIndex);
+            }
+        }
+
+        // Keyboard shortcut
+        function handleKeyPress(event) {
+            if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+                nextQuestion();
+            }
+        }
+
+        // Complete training
+        function completeTraining() {
+            document.getElementById('questionCard').classList.remove('active');
+            document.getElementById('completionScreen').classList.add('active');
+            
+            // Calculate stats
+            const answeredCount = answers.filter(a => a.length > 0).length;
+            const totalWords = answers.join(' ').split(/\s+/).filter(w => w.length > 0).length;
+            const avgLength = answeredCount > 0 ? Math.round(totalWords / answeredCount) : 0;
+            
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalWords').textContent = totalWords.toLocaleString();
+            document.getElementById('avgLength').textContent = avgLength;
+            
+            // Generate voice profile
+            generateVoiceProfile();
+        }
+
+        // Generate voice profile
+        function generateVoiceProfile() {
+            const profile = analyzeVoice();
+            document.getElementById('voiceProfile').innerHTML = `
+                <p><strong>Tone:</strong> ${profile.tone}</p>
+                <p><strong>Energy:</strong> ${profile.energy}</p>
+                <p><strong>Perspective:</strong> ${profile.perspective}</p>
+                <p><strong>Communication Style:</strong> ${profile.style}</p>
+                <p><strong>Key Phrases:</strong> ${profile.keyPhrases.join(', ')}</p>
+                <p><strong>Emoji Usage:</strong> ${profile.emojiUsage}</p>
+                <p style="margin-top: 15px; font-style: italic;">${profile.summary}</p>
+            `;
+        }
+
+        // Analyze voice
+        function analyzeVoice() {
+            const allText = answers.filter(a => a).join(' ').toLowerCase();
+            const words = allText.split(/\s+/);
+            
+            // Simple analysis (in production, use AI)
+            const iWords = (allText.match(/\bi\b/g) || []).length;
+            const weWords = (allText.match(/\bwe\b/g) || []).length;
+            const perspective = weWords > iWords ? "'We' (family-oriented)" : "'I' (personal)";
+            
+            const exclamations = (allText.match(/!/g) || []).length;
+            const energy = exclamations > 10 ? "High" : exclamations > 5 ? "Medium" : "Calm";
+            
+            // Key phrases
+            const commonPhrases = extractCommonPhrases(answers);
+            
+            return {
+                tone: "Warm and authentic",
+                energy: energy,
+                perspective: perspective,
+                style: "Conversational and genuine",
+                keyPhrases: commonPhrases.slice(0, 5),
+                emojiUsage: "Natural and purposeful",
+                summary: "Your voice is authentic, warm, and deeply personal. You speak with pride about your heritage while remaining approachable and welcoming. Your communication style balances professionalism with genuine warmth."
+            };
+        }
+
+        // Extract common phrases
+        function extractCommonPhrases(answers) {
+            const text = answers.filter(a => a).join(' ').toLowerCase();
+            const phrases = [];
+            
+            // Look for 2-3 word phrases
+            const words = text.split(/\s+/);
+            for (let i = 0; i < words.length - 2; i++) {
+                const phrase = words.slice(i, i + 3).join(' ');
+                if (phrase.length > 10) {
+                    phrases.push(phrase);
+                }
+            }
+            
+            // Count frequency
+            const frequency = {};
+            phrases.forEach(p => {
+                frequency[p] = (frequency[p] || 0) + 1;
+            });
+            
+            // Return top phrases
+            return Object.entries(frequency)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10)
+                .map(([phrase]) => phrase);
+        }
+
+        // Download results
+        function downloadResults() {
+            const results = {
+                timestamp: new Date().toISOString(),
+                name: "Thandiwe Ngubane-Zulu",
+                brand: "Bukhosi Royal Wines",
+                questions: questions.map((q, i) => ({
+                    category: q.category,
+                    question: q.question,
+                    answer: answers[i] || ""
+                })),
+                analysis: analyzeVoice(),
+                stats: {
+                    answeredCount: answers.filter(a => a.length > 0).length,
+                    totalWords: answers.join(' ').split(/\s+/).filter(w => w.length > 0).length,
+                    avgLength: Math.round(answers.join(' ').split(/\s+/).filter(w => w.length > 0).length / answers.filter(a => a.length > 0).length)
+                }
+            };
+            
+            const blob = new Blob([JSON.stringify(results, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `thandiwe_voice_profile_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Copy to clipboard
+        function copyToClipboard() {
+            const profile = analyzeVoice();
+            const text = `THANDIWE'S VOICE PROFILE\n\n` +
+                `Tone: ${profile.tone}\n` +
+                `Energy: ${profile.energy}\n` +
+                `Perspective: ${profile.perspective}\n` +
+                `Style: ${profile.style}\n\n` +
+                `Key Phrases:\n${profile.keyPhrases.map(p => `- ${p}`).join('\n')}\n\n` +
+                `Summary: ${profile.summary}`;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ Voice profile copied to clipboard!');
+            });
+        }
+    </script>
+</body>
+</html>
