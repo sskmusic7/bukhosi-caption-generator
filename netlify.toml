@@ -1,0 +1,9 @@
+[build]
+  publish = "."
+  command = "echo 'Static HTML deployment - no build needed'"
+
+# Redirect root to the main HTML file
+[[redirects]]
+  from = "/"
+  to = "/bukhosi_caption_generator.html"
+  status = 200
