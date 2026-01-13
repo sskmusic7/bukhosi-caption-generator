@@ -346,10 +346,11 @@
             <h2><span class="icon">⚙️</span> API Configuration</h2>
             
             <div class="api-config">
-                <label for="geminiKey">Google Gemini API Key:</label>
-                <input type="password" id="geminiKey" placeholder="Enter your Gemini API key">
+                <label for="geminiKey">Google Gemini API Key (Optional):</label>
+                <input type="password" id="geminiKey" placeholder="Leave blank to use default key, or enter your own">
                 <small style="color: #999; display: block; margin-top: 5px;">
-                    Get your key from: <a href="https://makersuite.google.com/app/apikey" target="_blank" style="color: #FFD700;">Google AI Studio</a>
+                    <strong>Default:</strong> Using built-in API key (for testing)<br>
+                    <strong>Custom:</strong> Get your key from: <a href="https://makersuite.google.com/app/apikey" target="_blank" style="color: #FFD700;">Google AI Studio</a>
                 </small>
             </div>
 
@@ -476,25 +477,23 @@
 
         // Save API configuration
         document.getElementById('saveConfigBtn').addEventListener('click', () => {
-            apiKey = document.getElementById('geminiKey').value.trim();
-            if (apiKey) {
+            const userKey = document.getElementById('geminiKey').value.trim();
+            if (userKey) {
+                apiKey = userKey;
                 localStorage.setItem('geminiApiKey', apiKey);
-                showSuccess('API key saved!');
-                if (currentImage) {
-                    generateBtn.disabled = false;
-                }
+                showSuccess('Custom API key saved! Will use your key instead of default.');
             } else {
-                showError('Please enter a valid API key');
+                apiKey = '';
+                localStorage.removeItem('geminiApiKey');
+                showSuccess('Using default API key (built-in).');
+            }
+            if (currentImage) {
+                generateBtn.disabled = false;
             }
         });
 
         // Generate caption
         document.getElementById('generateBtn').addEventListener('click', async () => {
-            if (!apiKey) {
-                showError('Please configure your API key first');
-                return;
-            }
-
             if (!currentImage) {
                 showError('Please upload an image first');
                 return;
@@ -613,39 +612,62 @@ CONTENT THEMES:
 
 ANALYZE THE IMAGE AND WRITE AN AUTHENTIC INSTAGRAM CAPTION IN YOUR VOICE.`;
 
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [
-                            { text: prompt },
-                            {
-                                inline_data: {
-                                    mime_type: "image/jpeg",
-                                    data: base64Image
+            // If user has provided their own API key, use it directly
+            if (apiKey) {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [
+                                { text: prompt },
+                                {
+                                    inline_data: {
+                                        mime_type: "image/jpeg",
+                                        data: base64Image
+                                    }
                                 }
-                            }
-                        ]
-                    }],
-                    generationConfig: {
-                        temperature: 0.9,
-                        topK: 40,
-                        topP: 0.95,
-                        maxOutputTokens: 4096,
-                    }
-                })
-            });
+                            ]
+                        }],
+                        generationConfig: {
+                            temperature: 0.9,
+                            topK: 40,
+                            topP: 0.95,
+                            maxOutputTokens: 4096,
+                        }
+                    })
+                });
 
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error?.message || 'API request failed');
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error?.message || 'API request failed');
+                }
+
+                const data = await response.json();
+                return data.candidates[0].content.parts[0].text;
+            } else {
+                // Use Netlify Function with env var API key
+                const response = await fetch('/.netlify/functions/generate-caption', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        imageData: base64Image,
+                        prompt: prompt
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'API request failed');
+                }
+
+                const data = await response.json();
+                return data.caption;
             }
-
-            const data = await response.json();
-            return data.candidates[0].content.parts[0].text;
         }
 
         // Copy caption
