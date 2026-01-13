@@ -1,6 +1,6 @@
 [build]
   publish = "."
-  command = "echo 'Static HTML deployment - no build needed'"
+  command = "npm install && echo 'Dependencies installed'"
 
 # Redirect root to the main HTML file
 [[redirects]]
