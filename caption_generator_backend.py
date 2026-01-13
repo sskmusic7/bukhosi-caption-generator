@@ -69,7 +69,15 @@ CAPTION STRUCTURE:
 3. CONNECTION (link to heritage/values/mission)
 4. CTA (optional, natural invitation)
 
-LENGTH: 150-250 chars for primary message, can extend to 300+ for storytelling
+CRITICAL - NEVER USE THESE AI-SOUNDING PHRASES:
+- "It's not just..." / "This isn't just..."
+- "It's more than..." / "This is more than..."
+- "Beyond just..." / "More than just..."
+- "Not only... but also..."
+- Any variation of these clichéd patterns
+Write naturally and directly. Be specific. Avoid meta-commentary about what things "are" or "aren't".
+
+LENGTH: 150-300 characters typical, but no strict limit. Write naturally and fully.
 
 EMOJIS: Sparingly (max 2-3): 🍷 👑 🏆 🌍 ✨ 🍇
 
@@ -171,7 +179,7 @@ def analyze_image_with_gemini(image_path):
             'temperature': 0.9,
             'top_p': 0.95,
             'top_k': 40,
-            'max_output_tokens': 1024,
+            'max_output_tokens': 4096,
         })
         
         caption = response.text
