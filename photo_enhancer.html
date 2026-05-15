@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bukhosi Photo Enhancer | Professional Image Enhancement</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #4a1a1a 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+        }
+
+        .logo {
+            margin-bottom: 10px;
+        }
+        .logo img {
+            max-width: 300px;
+            height: auto;
+        }
+
+        .tagline {
+            color: #ccc;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        .nav-buttons {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            color: #FFD700;
+            text-decoration: none;
+            font-size: 0.9em;
+            border: 1px solid #FFD700;
+            padding: 8px 15px;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 215, 0, 0.2);
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 0;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+        }
+
+        .card h2 {
+            color: #FFD700;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upload-zone {
+            border: 3px dashed rgba(255, 215, 0, 0.5);
+            border-radius: 0;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .upload-zone:hover {
+            border-color: #FFD700;
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .upload-zone.dragover {
+            border-color: #FFD700;
+            background: rgba(255, 215, 0, 0.2);
+            transform: scale(1.02);
+        }
+
+        .upload-zone span {
+            font-size: 3em;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .upload-zone p {
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .upload-zone input[type="file"] {
+            display: none;
+        }
+
+        .image-preview-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .preview-item {
+            position: relative;
+            aspect-ratio: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-item .remove-btn {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: rgba(244, 67, 54, 0.8);
+            color: white;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 0;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preview-item .status-badge {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 10px;
+            padding: 2px;
+            text-align: center;
+        }
+
+        .settings-section {
+            margin-bottom: 20px;
+        }
+
+        .settings-section label {
+            display: block;
+            color: #FFD700;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .style-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .style-option {
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .style-option:hover {
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .style-option.selected {
+            background: rgba(255, 215, 0, 0.2);
+            border-color: #FFD700;
+        }
+
+        .style-option h4 {
+            margin: 0 0 5px 0;
+            font-size: 1em;
+        }
+
+        .style-option p {
+            margin: 0;
+            font-size: 0.85em;
+            color: #ccc;
+        }
+
+        .variations-selector {
+            display: flex;
+            gap: 8px;
+        }
+
+        .variation-btn {
+            flex: 1;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .variation-btn:hover {
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .variation-btn.selected {
+            background: rgba(255, 215, 0, 0.2);
+            border-color: #FFD700;
+        }
+
+        .custom-prompt {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            color: white;
+            border-radius: 0;
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+
+        .custom-prompt:focus {
+            outline: none;
+            border-color: #FFD700;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            border: none;
+            color: #1a1a1a;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 0;
+            margin-top: 10px;
+        }
+
+        .action-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .results-section {
+            min-height: 400px;
+        }
+
+        .progress-container {
+            margin-bottom: 20px;
+        }
+
+        .progress-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .progress-item-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .progress-item-header img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            border-radius: 0;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%);
+            transition: width 0.3s ease;
+        }
+
+        .progress-status {
+            color: #ccc;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .result-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .result-item-header {
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .result-item-header img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .result-item-header .info {
+            flex: 1;
+        }
+
+        .result-item-header .info h4 {
+            font-size: 0.95em;
+            margin-bottom: 5px;
+        }
+
+        .result-item-header .info p {
+            font-size: 0.8em;
+            color: #ccc;
+        }
+
+        .enhanced-images {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2px;
+        }
+
+        .enhanced-images img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .enhanced-images img:hover {
+            transform: scale(1.05);
+            z-index: 1;
+        }
+
+        .result-item-actions {
+            padding: 10px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .result-item-actions button {
+            flex: 1;
+            padding: 8px 12px;
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid #FFD700;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85em;
+            border-radius: 0;
+        }
+
+        .result-item-actions button:hover {
+            background: rgba(255, 215, 0, 0.3);
+        }
+
+        .download-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .download-actions button {
+            flex: 1;
+        }
+
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #FFD700;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state span {
+            font-size: 4em;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        .history-section {
+            margin-top: 30px;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .history-item:hover {
+            background: rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 215, 0, 0.4);
+        }
+
+        .history-item img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+        }
+
+        .history-item .info {
+            flex: 1;
+        }
+
+        .history-item .info h4 {
+            font-size: 0.9em;
+            margin-bottom: 3px;
+        }
+
+        .history-item .info p {
+            font-size: 0.8em;
+            color: #999;
+        }
+
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .image-modal.active {
+            display: flex;
+        }
+
+        .image-modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            display: flex;
+            gap: 20px;
+        }
+
+        .image-modal-content img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border: 2px solid rgba(255, 215, 0, 0.5);
+        }
+
+        .image-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.5);
+            color: white;
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            border-radius: 0;
+        }
+
+        .compare-view {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .compare-view .image {
+            flex: 1;
+            text-align: center;
+        }
+
+        .compare-view .image img {
+            max-width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .compare-view .image h4 {
+            margin-top: 10px;
+            color: #FFD700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <img src="logo.png" alt="Bukhosi Royal Wines">
+            </div>
+            <div class="tagline">Photo Enhancement Engine | Professional Image Quality</div>
+            <div class="nav-buttons">
+                <a href="bukhosi_caption_generator.html" class="nav-btn">📝 Caption Generator</a>
+                <a href="personality_trainer.html" class="nav-btn">🧠 Personality Trainer</a>
+            </div>
+        </header>
+
+        <div class="main-grid">
+            <!-- Left Column: Settings -->
+            <div class="card">
+                <h2><span>✨</span> Enhancement Settings</h2>
+
+                <div class="settings-section">
+                    <label>Enhancement Style</label>
+                    <div class="style-selector">
+                        <div class="style-option selected" data-style="professional_studio">
+                            <h4>🎬 Professional Studio</h4>
+                            <p>Clean studio quality with perfect lighting</p>
+                        </div>
+                        <div class="style-option" data-style="contextual_scenery">
+                            <h4>🌅 Contextual Scenery</h4>
+                            <p>Appropriate environment matching your content</p>
+                        </div>
+                        <div class="style-option" data-style="luxury_editorial">
+                            <h4>💎 Luxury Editorial</h4>
+                            <p>High-fashion magazine aesthetic</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <label>Number of Variations</label>
+                    <div class="variations-selector">
+                        <button class="variation-btn selected" data-variations="1">1</button>
+                        <button class="variation-btn" data-variations="2">2</button>
+                        <button class="variation-btn" data-variations="3">3</button>
+                        <button class="variation-btn" data-variations="4">4</button>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <label>Custom Enhancement Prompt (Optional)</label>
+                    <textarea class="custom-prompt" id="customPrompt" placeholder="Describe specific enhancement requirements..."></textarea>
+                </div>
+
+                <button id="enhanceBtn" class="action-btn" disabled>✨ Enhance Photos</button>
+            </div>
+
+            <!-- Right Column: Upload & Results -->
+            <div class="card results-section">
+                <h2><span>📸</span> Batch Upload</h2>
+
+                <div class="upload-zone" id="uploadZone">
+                    <div>
+                        <span>🖼️</span>
+                        <p>Drop your images here</p>
+                        <p style="color: #999; margin-top: 5px;">or click to browse (1-10 images)</p>
+                    </div>
+                    <input type="file" id="imageInput" accept="image/*" multiple>
+                </div>
+
+                <div id="imagePreviewList" class="image-preview-list"></div>
+
+                <div id="progressContainer" class="progress-container"></div>
+
+                <div id="resultsContainer" class="results-grid"></div>
+
+                <div id="emptyState" class="empty-state">
+                    <span>🎨</span>
+                    <h3>Upload images to get started</h3>
+                    <p>Enhance your photos with professional quality</p>
+                </div>
+
+                <div id="downloadActions" class="download-actions" style="display: none;">
+                    <button id="downloadAllBtn" class="action-btn">📥 Download All (ZIP)</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Section -->
+        <div class="card history-section">
+            <h2><span>📜</span> Recent Enhancements</h2>
+            <div id="historyList"></div>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="image-modal">
+        <button class="image-modal-close" onclick="closeModal()">×</button>
+        <div class="image-modal-content">
+            <img id="modalImage" src="" alt="Enhanced Image">
+        </div>
+    </div>
+
+    <script>
+        // State Management
+        const state = {
+            uploadedImages: [],
+            enhancedResults: [],
+            processingQueue: [],
+            settings: {
+                style: 'professional_studio',
+                variations: 1,
+                customPrompt: ''
+            },
+            isProcessing: false
+        };
+
+        // DOM Elements
+        const uploadZone = document.getElementById('uploadZone');
+        const imageInput = document.getElementById('imageInput');
+        const imagePreviewList = document.getElementById('imagePreviewList');
+        const progressContainer = document.getElementById('progressContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const emptyState = document.getElementById('emptyState');
+        const enhanceBtn = document.getElementById('enhanceBtn');
+        const downloadAllBtn = document.getElementById('downloadAllBtn');
+        const customPromptInput = document.getElementById('customPrompt');
+        const historyList = document.getElementById('historyList');
+        const imageModal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            setupEventListeners();
+            loadHistory();
+        });
+
+        function setupEventListeners() {
+            // Upload zone events
+            uploadZone.addEventListener('click', () => imageInput.click());
+            uploadZone.addEventListener('dragover', handleDragOver);
+            uploadZone.addEventListener('dragleave', handleDragLeave);
+            uploadZone.addEventListener('drop', handleDrop);
+            imageInput.addEventListener('change', handleFileSelect);
+
+            // Style selection
+            document.querySelectorAll('.style-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    document.querySelectorAll('.style-option').forEach(o => o.classList.remove('selected'));
+                    option.classList.add('selected');
+                    state.settings.style = option.dataset.style;
+                });
+            });
+
+            // Variation selection
+            document.querySelectorAll('.variation-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.variation-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    state.settings.variations = parseInt(btn.dataset.variations);
+                });
+            });
+
+            // Custom prompt
+            customPromptInput.addEventListener('input', (e) => {
+                state.settings.customPrompt = e.target.value;
+            });
+
+            // Enhance button
+            enhanceBtn.addEventListener('click', processBatch);
+
+            // Download all button
+            downloadAllBtn.addEventListener('click', downloadAllImages);
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+            addImages(files);
+        }
+
+        function handleFileSelect(e) {
+            const files = Array.from(e.target.files);
+            addImages(files);
+        }
+
+        function addImages(files) {
+            const maxImages = 10;
+            const remainingSlots = maxImages - state.uploadedImages.length;
+            const filesToAdd = files.slice(0, remainingSlots);
+
+            if (files.length > remainingSlots) {
+                alert(`Maximum ${maxImages} images allowed. Adding ${remainingSlots} of ${files.length} images.`);
+            }
+
+            filesToAdd.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const imageData = {
+                        id: Date.now() + Math.random(),
+                        name: file.name,
+                        data: e.target.result.split(',')[1],
+                        preview: e.target.result,
+                        status: 'pending'
+                    };
+                    state.uploadedImages.push(imageData);
+                    updatePreviewList();
+                    updateEnhanceButton();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function removeImage(id) {
+            state.uploadedImages = state.uploadedImages.filter(img => img.id !== id);
+            updatePreviewList();
+            updateEnhanceButton();
+        }
+
+        function updatePreviewList() {
+            imagePreviewList.innerHTML = state.uploadedImages.map(img => `
+                <div class="preview-item">
+                    <img src="${img.preview}" alt="${img.name}">
+                    <button class="remove-btn" onclick="removeImage(${img.id})">×</button>
+                    <div class="status-badge">${img.status}</div>
+                </div>
+            `).join('');
+        }
+
+        function updateEnhanceButton() {
+            enhanceBtn.disabled = state.uploadedImages.length === 0 || state.isProcessing;
+            emptyState.style.display = state.uploadedImages.length === 0 ? 'block' : 'none';
+        }
+
+        async function processBatch() {
+            if (state.isProcessing || state.uploadedImages.length === 0) return;
+
+            state.isProcessing = true;
+            updateEnhanceButton();
+            progressContainer.innerHTML = '';
+            resultsContainer.innerHTML = '';
+            state.enhancedResults = [];
+
+            for (const image of state.uploadedImages) {
+                updateImageStatus(image.id, 'processing');
+
+                const variations = [];
+                for (let i = 0; i < state.settings.variations; i++) {
+                    try {
+                        const result = await enhanceImage(image, i + 1);
+                        variations.push(result);
+                    } catch (error) {
+                        console.error(`Enhancement failed for ${image.name} variation ${i + 1}:`, error);
+                        variations.push({ error: error.message, variation: i + 1 });
+                    }
+                }
+
+                state.enhancedResults.push({
+                    original: image,
+                    variations: variations
+                });
+
+                updateImageStatus(image.id, 'completed');
+                addResultItem(image, variations);
+            }
+
+            state.isProcessing = false;
+            updateEnhanceButton();
+            downloadAllBtn.style.display = state.enhancedResults.length > 0 ? 'flex' : 'none';
+
+            // Save to history
+            saveToHistory();
+        }
+
+        function updateImageStatus(imageId, status) {
+            const image = state.uploadedImages.find(img => img.id === imageId);
+            if (image) {
+                image.status = status;
+                updatePreviewList();
+
+                // Add progress item
+                const progressItem = document.createElement('div');
+                progressItem.className = 'progress-item';
+                progressItem.innerHTML = `
+                    <div class="progress-item-header">
+                        <img src="${image.preview}" alt="${image.name}">
+                        <div>
+                            <strong>${image.name}</strong>
+                            <div class="progress-status">${status === 'processing' ? 'Enhancing...' : 'Completed!'}</div>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-bar-fill" style="width: ${status === 'processing' ? '50%' : '100%'}"></div>
+                    </div>
+                `;
+                progressContainer.appendChild(progressItem);
+            }
+        }
+
+        async function enhanceImage(image, variationNum) {
+            const response = await fetch('/.netlify/functions/enhance-image', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    imageData: image.data,
+                    style: state.settings.style,
+                    customPrompt: state.settings.customPrompt
+                })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+                throw new Error(result.error || 'Enhancement failed');
+            }
+
+            return {
+                variation: variationNum,
+                data: result.enhancedImage,
+                style: result.style,
+                instructions: result.enhancementInstructions
+            };
+        }
+
+        function addResultItem(originalImage, variations) {
+            const resultItem = document.createElement('div');
+            resultItem.className = 'result-item';
+
+            let imagesHtml = '';
+            variations.forEach(variation => {
+                if (variation.data) {
+                    imagesHtml += `<img src="data:image/jpeg;base64,${variation.data}" alt="Enhanced variation ${variation.variation}" onclick="openModal('data:image/jpeg;base64,${variation.data}')">`;
+                } else if (variation.instructions) {
+                    imagesHtml += `<div style="padding: 20px; background: rgba(0,0,0,0.5); font-size: 0.8em; color: #ccc;">${variation.instructions}</div>`;
+                }
+            });
+
+            resultItem.innerHTML = `
+                <div class="result-item-header">
+                    <img src="${originalImage.preview}" alt="${originalImage.name}">
+                    <div class="info">
+                        <h4>${originalImage.name}</h4>
+                        <p>${state.settings.style} • ${variations.length} variation(s)</p>
+                    </div>
+                </div>
+                <div class="enhanced-images">
+                    ${imagesHtml}
+                </div>
+                <div class="result-item-actions">
+                    <button onclick="downloadSingle('${originalImage.id}')">Download Original</button>
+                    ${variations.filter(v => v.data).length > 0 ? '<button onclick="downloadVariations(' + JSON.stringify(variations.filter(v => v.data).map(v => v.data)) + ')">Download Enhanced</button>' : ''}
+                </div>
+            `;
+
+            resultsContainer.appendChild(resultItem);
+        }
+
+        function openModal(src) {
+            modalImage.src = src;
+            imageModal.classList.add('active');
+        }
+
+        function closeModal() {
+            imageModal.classList.remove('active');
+        }
+
+        function downloadSingle(imageId) {
+            const image = state.uploadedImages.find(img => img.id == imageId);
+            if (image) {
+                const link = document.createElement('a');
+                link.download = `original_${image.name}`;
+                link.href = image.preview;
+                link.click();
+            }
+        }
+
+        function downloadVariations(imageDataList) {
+            imageDataList.forEach((data, index) => {
+                const link = document.createElement('a');
+                link.download = `enhanced_variation_${index + 1}.jpg`;
+                link.href = `data:image/jpeg;base64,${data}`;
+                link.click();
+            });
+        }
+
+        async function downloadAllImages() {
+            alert('Downloading all enhanced images individually. For ZIP download, a library like JSZip would be needed.');
+            state.enhancedResults.forEach(result => {
+                result.variations.forEach(variation => {
+                    if (variation.data) {
+                        downloadVariations([variation.data]);
+                    }
+                });
+            });
+        }
+
+        function saveToHistory() {
+            const historyItem = {
+                date: new Date().toISOString(),
+                imageCount: state.uploadedImages.length,
+                style: state.settings.style,
+                preview: state.uploadedImages[0]?.preview || ''
+            };
+
+            let history = JSON.parse(localStorage.getItem('photoEnhancerHistory') || '[]');
+            history.unshift(historyItem);
+            history = history.slice(0, 20); // Keep last 20
+            localStorage.setItem('photoEnhancerHistory', JSON.stringify(history));
+            loadHistory();
+        }
+
+        function loadHistory() {
+            const history = JSON.parse(localStorage.getItem('photoEnhancerHistory') || '[]');
+
+            historyList.innerHTML = history.map(item => {
+                const date = new Date(item.date).toLocaleDateString();
+                const styleLabels = {
+                    professional_studio: 'Studio',
+                    contextual_scenery: 'Contextual',
+                    luxury_editorial: 'Editorial'
+                };
+                return `
+                    <div class="history-item">
+                        <img src="${item.preview}" alt="Preview">
+                        <div class="info">
+                            <h4>${item.imageCount} image(s) • ${styleLabels[item.style] || item.style}</h4>
+                            <p>${date}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('') || '<p style="color: #999; text-align: center; padding: 20px;">No enhancement history yet</p>';
+        }
+
+        // Close modal on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Close modal on click outside
+        imageModal.addEventListener('click', (e) => {
+            if (e.target === imageModal) closeModal();
+        });
+    </script>
+</body>
+</html>
