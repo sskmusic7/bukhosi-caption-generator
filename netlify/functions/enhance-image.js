@@ -50,23 +50,32 @@ Create a luxury, editorial-quality image.
     // Use custom prompt if provided, otherwise use style template
     const prompt = customPrompt || PROMPT_TEMPLATES[style] || PROMPT_TEMPLATES.professional_studio;
 
-    // Call Gemini Imagen API for image generation using Imagen 3.0
+    // Call Gemini 3.1 Flash Image API for image generation
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-001:predictImageGeneration?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-1-flash-image:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          prompt: prompt + '\n\nGenerate an enhanced version of this image.',
-          inputImage: {
-            imageBytes: imageData
-          },
-          numberOfImages: 1,
-          aspectRatio: '1:1',
-          safetyFilterLevel: 'block_some',
-          personGeneration: 'allow_adult'
+          contents: [{
+            parts: [
+              { text: prompt + '\n\nGenerate an enhanced version of this image.' },
+              {
+                inline_data: {
+                  mime_type: "image/jpeg",
+                  data: imageData
+                }
+              }
+            ]
+          }],
+          generationConfig: {
+            temperature: 0.8,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 8192,
+          }
         })
       }
     );
@@ -81,8 +90,8 @@ Create a luxury, editorial-quality image.
 
     const data = await response.json();
 
-    // Extract generated image from Imagen API response
-    const generatedImage = data.predictedImage?.bytesBase64Encoded;
+    // Extract generated image from Gemini API response
+    const generatedImage = data.candidates?.[0]?.content?.parts?.find(p => p.inline_data)?.inline_data?.data;
 
     if (!generatedImage) {
       // If no image was generated, return error details
