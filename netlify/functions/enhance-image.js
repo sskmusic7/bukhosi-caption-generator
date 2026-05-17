@@ -102,10 +102,9 @@ Create a luxury, editorial-quality image.
       };
     }
 
-    // Extract generated image from Gemini API response (same as reference projects)
-    // Note: Gemini returns camelCase 'inlineData' in the response
-    const generatedImage = data.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data ||
-                            data.candidates?.[0]?.content?.parts?.find(p => p.inline_data)?.inline_data?.data;
+    // Extract generated image from Gemini API response
+    // The response uses camelCase 'inlineData' - Banana Builder pattern
+    const generatedImage = data.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
 
     if (!generatedImage) {
       // If no image was generated, return error details
