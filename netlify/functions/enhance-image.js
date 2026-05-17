@@ -52,7 +52,7 @@ Create a luxury, editorial-quality image.
 
     // Call Imagen 3 API for image-to-image enhancement
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-001:predictImageGeneration?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-preview:predictImageGeneration?key=${apiKey}`,
       {
         method: 'POST',
         headers: {
