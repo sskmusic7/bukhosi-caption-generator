@@ -104,7 +104,9 @@ Create a luxury, editorial-quality image.
     }
 
     // Extract generated image from Gemini API response (same as reference projects)
-    const generatedImage = data.candidates?.[0]?.content?.parts?.find(p => p.inline_data)?.inline_data?.data;
+    // Note: Gemini returns camelCase 'inlineData' in the response
+    const generatedImage = data.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data ||
+                            data.candidates?.[0]?.content?.parts?.find(p => p.inline_data)?.inline_data?.data;
 
     if (!generatedImage) {
       // If no image was generated, return error details
