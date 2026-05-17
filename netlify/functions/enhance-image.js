@@ -50,23 +50,34 @@ Create a luxury, editorial-quality image.
     // Use custom prompt if provided, otherwise use style template
     const prompt = customPrompt || PROMPT_TEMPLATES[style] || PROMPT_TEMPLATES.professional_studio;
 
-    // Call Imagen 3 API for image-to-image enhancement
+    // Call Gemini 3.1 Flash Image Preview API for image enhancement
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-preview:predictImageGeneration?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image-preview:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          prompt: prompt + '\n\nGenerate an enhanced, professional version of this image.',
-          inputImage: {
-            imageBytes: imageData
-          },
-          numberOfImages: 1,
-          aspectRatio: '1:1',
-          safetyFilterLevel: 'block_some',
-          personGeneration: 'allow_adult'
+          contents: [{
+            role: 'user',
+            parts: [
+              { text: prompt + '\n\nGenerate an enhanced, professional version of this image.' },
+              {
+                inline_data: {
+                  mime_type: "image/jpeg",
+                  data: imageData
+                }
+              }
+            ]
+          }],
+          generationConfig: {
+            temperature: 0.8,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 8192,
+            responseModalities: ["TEXT", "IMAGE"]
+          }
         })
       }
     );
@@ -92,12 +103,12 @@ Create a luxury, editorial-quality image.
       };
     }
 
-    // Extract generated image from Imagen API response
-    const generatedImage = data.predictedImage?.bytesBase64Encoded;
+    // Extract generated image from Gemini API response (same as reference projects)
+    const generatedImage = data.candidates?.[0]?.content?.parts?.find(p => p.inline_data)?.inline_data?.data;
 
     if (!generatedImage) {
       // If no image was generated, return error details
-      console.error('Imagen API Response:', JSON.stringify(data, null, 2));
+      console.error('Gemini 3.1 Flash Image API Response:', JSON.stringify(data, null, 2));
       return {
         statusCode: 200,
         headers: {
@@ -109,7 +120,7 @@ Create a luxury, editorial-quality image.
         body: JSON.stringify({
           success: false,
           enhancedImage: null,
-          message: 'No image generated from Imagen API. Response: ' + JSON.stringify(data),
+          message: 'No image generated. API Response: ' + JSON.stringify(data),
           style: style
         })
       };
