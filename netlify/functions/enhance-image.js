@@ -50,9 +50,9 @@ Create a luxury, editorial-quality image.
     // Use custom prompt if provided, otherwise use style template
     const prompt = customPrompt || PROMPT_TEMPLATES[style] || PROMPT_TEMPLATES.professional_studio;
 
-    // Call Gemini 3.1 Flash Image API for image generation
+    // Call Gemini 2.5 Flash API for image enhancement
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-1-flash-image:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-exp:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: {
@@ -91,6 +91,7 @@ Create a luxury, editorial-quality image.
     const data = await response.json();
 
     // Extract generated image from Gemini API response
+    // Note: gemini-2.5-flash-exp can generate images when prompted
     const generatedImage = data.candidates?.[0]?.content?.parts?.find(p => p.inline_data)?.inline_data?.data;
 
     if (!generatedImage) {
