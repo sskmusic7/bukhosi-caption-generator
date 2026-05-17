@@ -72,14 +72,25 @@ Create a luxury, editorial-quality image.
     );
 
     if (!response.ok) {
-      const error = await response.json();
+      const errorText = await response.text();
+      console.error('Imagen API Error Response:', errorText);
       return {
         statusCode: response.status,
-        body: JSON.stringify({ error: error.error?.message || 'API request failed' })
+        body: JSON.stringify({ error: `API request failed: ${errorText}` })
       };
     }
 
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (jsonError) {
+      const responseText = await response.text();
+      console.error('Failed to parse JSON. Raw response:', responseText);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: `Failed to parse API response: ${responseText}` })
+      };
+    }
 
     // Extract generated image from Imagen API response
     const generatedImage = data.predictedImage?.bytesBase64Encoded;
