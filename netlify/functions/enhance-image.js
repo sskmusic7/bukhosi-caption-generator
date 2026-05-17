@@ -72,11 +72,10 @@ Create a luxury, editorial-quality image.
             ]
           }],
           generationConfig: {
-            temperature: 0.8,
+            temperature: 1,
             topK: 40,
             topP: 0.95,
-            maxOutputTokens: 8192,
-            responseModalities: ["TEXT", "IMAGE"]
+            maxOutputTokens: 8192
           }
         })
       }
